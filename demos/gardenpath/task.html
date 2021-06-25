@@ -1,0 +1,521 @@
+<html>
+<head>
+<title>Dog Training Task used in Ho et al. (2015) Teaching with Rewards and Punishments: Reinforcement or Communcation?</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+<script src ="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script src="http://research.clps.brown.edu/mkho/libraries/psyTaskFun/psyTaskFun-0.5.js"></script>
+
+<style>
+#task {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+	width:600px;
+}
+#feedback {
+	width:500px;
+}
+#task div {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+#garden {
+	width :501px;
+	height : 501px;
+	position :relative;
+}
+
+#feedback .ui-slider-handle {
+	background : black;
+}
+
+#feedback .ui-slider-horizontal {
+	background : #AD5C33;
+}
+
+</style>
+
+</head>
+
+<body>
+<div id='task'>
+	<div id='messages' style='font-size: 40px; background-color:black; color:white; border-color: red; border-style:solid; border-width:1px'>
+		Train the dogs!
+	</div>
+	<div id='garden'>
+		<div id='dog'>
+		</div>
+	</div>
+	<img  style="width: 100%;" src='./img/punishToReward.png'>
+	<div id='feedback'>
+	</div>
+	<div style='font-size:15px'>
+		Click and drag the slider to give more or less rewards and punishments
+	</div>
+</div>
+</body>
+
+<script>
+$j(function() {
+
+});
+
+/********************************
+*
+* Set up Task variables
+*
+*********************************/
+
+/*
+Task:
+# = avoid (-1)
+$ = goal (+1)
+o = walk on (0)
+
+2   o o $
+1   o # #
+0   o # #
+
+    0 1 2
+*/
+var workerID = "";
+var taskStart = +new Date;
+var gridWidth = 3;
+var gridHeight = 3;
+var actions = ['^', 'v', '>', '<'];
+
+var gridWorld = [['o', 'o', '$'],
+				 ['o', 'y', 'b'],
+				 ['o', 'n', 'p']];
+
+var optimalPolicy = [['>', '>', 'x'],
+				 	 ['^', '^', '^'],
+				 	 ['^', '<', '^']];
+//access gridworld object through this function to maintain correct orientation
+var getStateType = function (x, y) {
+	return gridWorld[gridHeight-y-1][x]
+}
+
+var getOptimalMove = function (x, y) {
+	return optimalPolicy[gridHeight-y-1][x]
+}
+
+var isActionOptimal = function (state, action) {
+	if (action == getOptimalMove(state[0],state[1])) {
+		return 'optimal'
+	}
+	return 'suboptimal'
+}
+
+//enumerate all possible dog moves
+//counterbalanced action types: optimal/suboptimal
+//iterate through: dog number
+var generateMoves = function () {
+	var optimalMoves = [];
+	var suboptimalMoves = [];
+	for (var i = 0; i < gridWidth; i++) {
+		for (var j = 0; j < gridHeight; j++) {
+			for (var k = 0; k < 4; k++) {
+
+				//if the action is at the edge of the board, don't include
+				if (i == 0 && actions[k] == '<') {continue;}
+				if (i == (gridWidth-1) && actions[k] == '>') {continue;}
+				if (j == 0 && actions[k] == 'v') {continue;}
+				if (j == (gridHeight-1) && actions[k] == '^') {continue;}
+
+				var move = {
+					x:i,
+					y:j,
+					action:actions[k],
+					optimal: isActionOptimal([i,j], actions[k])
+				};
+
+				if (move.optimal == 'optimal') {
+					optimalMoves.push(move);
+				}
+				else {
+					suboptimalMoves.push(move);
+				}
+			}
+		}
+	}
+	_.shuffleInPlace(optimalMoves);
+	_.shuffleInPlace(suboptimalMoves);
+	var order = _.genLocallyRandomSequence(['o','s'], [2, 4], 4)
+	var dogColor = _.genLocallyRandomSequence([0,1,2,3,4,5,6,7], [1,1,1,1,1,1,1,1], 4);
+
+	var dogMoves = [];
+	for (var i = 0; i < order.length; i++) {
+		var toAdd = null;
+		if (order[i] == 'o') {
+			toAdd = optimalMoves.pop();
+			toAdd.color = dogColor[i];
+		}
+		else {
+			toAdd = suboptimalMoves.pop();
+			toAdd.color = dogColor[i];
+		}
+		dogMoves.push(toAdd);
+	}
+	console.log(dogMoves);
+	return dogMoves
+}
+
+var getFinalLocation = function (move) {
+	var x = move.x;
+	var y = move.y;
+	if (move.action == '^') {
+		y++;
+	}
+	else if (move.action == 'v') {
+		y--;
+	}
+	else if (move.action == '>') {
+		x++;
+	}
+	else if (move.action == '<') {
+		x--;
+	}
+	return {x:x, y:y}
+
+}
+
+/********************************
+*
+*     Set up Task Visually
+*
+*********************************/
+var loadGridPictures = function () {
+	for (var i = 0; i < gridWidth; i++) {
+		$j( "#garden").prepend('<div></div>');
+		var row = $j("#garden div").first();
+		for (var j = 0; j < gridHeight; j++) {
+			var stateType = getStateType(j, i);
+			var pic = "";
+			if (stateType == 'o') {
+				pic = 'sidewalk.png';
+			}
+			if (stateType == 'y') {
+				pic = 'yellowflowers.png';
+			}
+			if (stateType == 'b') {
+				pic = 'blueflowers.png';
+			}
+			if (stateType == 'n') {
+				pic = 'orangeflowers.png';
+			}
+			if (stateType == 'p') {
+				pic = 'pinkflowers.png';
+			}
+
+
+			if (stateType == '$') {
+				row.append("<img id='home' class='gardentile' src='./img/house.png'>");
+			}
+			else {
+				row.append("<img class='gardentile' src='./img/"+pic+"'>");
+			}
+		}
+	}
+	var tilePixels = Math.round(500/gridWidth);
+	$j('.gardentile').css('width', tilePixels+'px');
+	$j('.gardentile').css('height', tilePixels+'px');
+
+}
+
+//
+// Dog movements
+var imgWidth = Math.floor(500/gridWidth);
+var dogBasex = 0;
+var dogBasey = 0;
+$j('#dog').css('width', imgWidth+'px');
+$j('#dog').css('height', imgWidth+'px');
+$j('#dog').css('background-image', 'url(./img/dogSpriteSheet.png)');
+$j('#dog').css('background-size', (12*imgWidth)+'px '+(8*imgWidth)+'px');
+$j('#dog').css('position', 'absolute');
+$j('#dog').css('top', '0px');
+var walkingDog = null;
+var dog = $j('#dog');
+var dogWalkDirNum = -1;
+var dogWalkRate = 200;
+var dogWalkTime = 2000;
+var dogLookTime = 3000;
+var timeBetweenTrials = 1000;
+
+var showDogMove = function (dogMove) {
+	//get dog color
+	console.log(dogMove.color);
+	dogBasex = (dogMove.color % 4)*imgWidth*3;
+	dogBasey = Math.floor(dogMove.color/2)*imgWidth*4;
+
+	//teleport dog to new location
+	moveDog(dogMove.x, dogMove.y, null, 0);
+	dog.css('backgroundPosition', '-'+(dogBasex+(imgWidth*1))+'px -'+(dogBasey+(imgWidth*0+5))+'px');
+
+
+	dogWalkDirNum = -1;
+	console.log(dogMove.action);
+
+	if (dogMove.action == '^') {
+		dogWalkDirNum = 3;
+	}
+	else if (dogMove.action == 'v') {
+		dogWalkDirNum = 0;
+	}
+	else if (dogMove.action == '>') {
+		dogWalkDirNum = 2;
+	}
+	else if (dogMove.action == '<') {
+		dogWalkDirNum = 1;
+	}
+	setTimeout(function() {
+		//tween the dog's location
+		moveDog(dogMove.x, dogMove.y, dogMove.action, dogWalkTime);
+		walkDog();
+		setTimeout(function() {
+			stopDog();
+		}, dogWalkTime);
+	}, dogLookTime);
+}
+
+var moveDog = function (x0, y0, direction, moveTime) {
+	var y1 = y0;
+	var x1 = x0;
+	if (direction == '>') {
+		x1 = x0+1;
+	}
+	if (direction == '<') {
+		x1 = x0-1;
+	}
+	if (direction == 'v') {
+		y1 = y0-1;
+	}
+	if (direction == '^') {
+		y1 = y0+1;
+	}
+
+	var imgX0 = Math.floor(x0*(500/gridWidth));
+	var imgX1 = Math.floor(x1*(500/gridWidth));
+	var imgY0 = Math.floor((gridHeight - y0 - 1)*(500/gridHeight));
+	var imgY1 = Math.floor((gridHeight - y1 - 1)*(500/gridHeight));
+
+	dog.css('top', imgY0+'px');
+	dog.css('left', imgX0+'px');
+	dog.animate({'top' : imgY1+'px', 'left': imgX1+'px'}, moveTime);
+
+}
+
+var walkDog = function() {
+	dog.css('backgroundPosition', '-'+(dogBasex+(imgWidth*0))+'px -'+(dogBasey+(imgWidth*dogWalkDirNum+5))+'px');
+	walkingDog = setTimeout(function () {
+		dog.css('backgroundPosition', '-'+(dogBasex+(imgWidth*2))+'px -'+(dogBasey+(imgWidth*dogWalkDirNum+5))+'px');
+		walkingDog = setTimeout(function() {
+			walkDog();
+		}, dogWalkRate);
+	}, dogWalkRate);
+}
+
+var stopDog = function() {
+	dog.css('backgroundPosition', '-'+(dogBasex+(imgWidth*1))+'px -'+(dogBasey+(imgWidth*dogWalkDirNum+5))+'px');
+	clearTimeout(walkingDog);
+}
+
+/********************************
+*
+*     Interaction with Task
+*     Saving data
+*
+*********************************/
+
+//enable slider
+//trial load, record time
+//on click, record time
+//on stop, record time, record value, send stuff
+
+
+var trialNum = 0;
+var respData = {};
+var allResponses = [];
+var startNextTrial = function () {
+	$j('#dog').show();
+	console.log('loading next trial');
+	$j('#messages').text('Watch what dog #'+(trialNum+1)+' does');
+
+	respData.trial = trialNum;
+	respData.startTime = (+new Date) - taskStart;
+	respData.x = dogMoves[trialNum].x;
+	respData.y = dogMoves[trialNum].y;
+	respData.action = dogMoves[trialNum].action;
+	respData.optimal = dogMoves[trialNum].optimal;
+	respData.color = dogMoves[trialNum].color;
+	respData.workerID = workerID;
+
+	showDogMove(dogMoves[trialNum]);
+	$j('#feedback').slider('value', 50);
+	setTimeout(function () {
+		$j('#messages').text('How will you respond? ('+ (trialNum+1)+' of 24)');
+		//$j('#feedback').slider('enable');
+		setupSliderLogic();
+	}, dogWalkTime+dogLookTime+100);
+
+
+}
+
+//Functions for sliding and stopping
+//set up slider UI logic during trial
+var setupSliderLogic = function () {
+	//disable interaction if you don't click on slider handle
+	$j('#feedback').hover(function (event) {
+			var handle = $j('#feedback').find('.ui-slider-handle');
+			if (event.target != handle[0]) {
+				$j('#feedback').slider('disable');
+			}
+			else {
+				$j('#feedback').slider('enable');
+			}
+		},
+		function () {
+			$j('#feedback').slider('enable');
+		});
+
+	var handle = $j('#feedback').find('.ui-slider-handle');
+	handle.hover(function (event) {
+		$j('#feedback').slider('enable');
+	},
+	function (event) {
+		$j('#feedback').slider('disable');
+	});
+}
+
+//when slider handle is activated
+$j('#feedback').on('slidestart', function (event, ui) {
+		respData.slideStart = (+new Date) - taskStart;
+		$j('#feedback').off('mouseenter mouseleave');
+		var handle = $j('#feedback').find('.ui-slider-handle');
+		handle.off('mouseenter mouseleave');
+	});
+
+//when slider handle is released
+$j('#feedback').on('slidestop', function (event, ui) {
+	respData.slideStop = (+new Date) - taskStart;
+	respData.response = $j('#feedback').slider('value');
+	console.log(respData);
+
+	$j('#feedback').slider('disable');
+	if (trialNum >= dogMoves.length-1) { //last trial
+		//end
+		endExperiment();
+	}
+	else {
+		allResponses.push(respData);
+		respData = {};
+		setTimeout(function () {
+			trialNum++;
+			startNextTrial();
+		}, timeBetweenTrials);
+	}
+});
+
+var endExperiment = function () {
+	$j('#messages').text("That's all the training for today. Click on the door to continue");
+	$j(window).unbind('beforeunload', closeAlert);
+	$j("#dog").hide();
+}
+
+//start experiment
+var images = ['blueflowers.png', 'catSpriteSheet.png', 'dogSpriteSheet.png', 'horseSpriteSheet.png', 'house.png', 'orangeflowers.png', 'pinkflowers.png', 'punishToReward.png', 'sidewalk.png', 'yellowflowers.png'];
+for (var i = 0; i < images.length; i++) {
+	psyFun.preloadImage('./img/'+images[i]);
+}
+
+var setDogSpeed = function (multiplier) {
+	dogWalkRate = 200*multiplier;
+	dogWalkTime = 2000*multiplier;
+	dogLookTime = 3000*multiplier;
+};
+
+var initializeTask = function (callback) {
+	$j('#messages').text('Click anywhere in the yard to begin!');
+
+	//spin dog
+	dogWalkDirNum = 0;
+	spinDog();
+
+	$j('.gardentile').on('click', function () {
+		$j('#messages').text('Train the dogs!');
+		clearTimeout(spinningDog);
+		setDogSpeed(dogSpeed);
+		$j('#dog').hide();
+		$j('.gardentile').off();
+		setTimeout(function() {
+			callback();
+		}, dogWalkTime+dogLookTime+100);
+
+	});
+};
+
+
+var spinningDog = null;
+var waitingDogMoves = [
+						{action:"^",color:1,x:-1,y:0},
+						{action:"v",color:1,x:-1,y:1},
+						{action:"^",color:1,x:-1,y:0},
+						{action:"v",color:1,x:-1,y:1},
+						{action:"^",color:0,x:3,y:0},
+						{action:"v",color:0,x:3,y:1},
+						{action:"^",color:0,x:3,y:0},
+						{action:"v",color:0,x:3,y:1}
+						];
+var spinDogNum = 0;
+var spinDog = function () {
+	setDogSpeed(.5);
+	spinDogNum++;
+	spinDogNum = spinDogNum % waitingDogMoves.length;
+	showDogMove(waitingDogMoves[spinDogNum]);
+	spinningDog = setTimeout(function () {
+		spinDog();
+	}, dogWalkTime+dogLookTime+100);
+}
+
+var dogMoves = [];
+var closeAlert = null;
+var dogSpeed = .75;
+$j(function() {
+	if (psyFun.getURLParam('dogSpeed') != "") {
+		dogSpeed = parseFloat(psyFun.getURLParam('dogSpeed'));
+	}
+	//iniitalize important task stuff
+	workerID = psyFun.getURLParam('workerID');
+	$j( "#feedback" ).slider({animate:'fast', max:100, min:0, step:1, value:50});
+	$j('#feedback').slider('disable');
+
+	loadGridPictures();
+
+	var noConsecutiveLocations = false;
+	while (!noConsecutiveLocations) {
+		dogMoves = generateMoves();
+		noConsecutiveLocations = true;
+		for (var i = 0; i < (dogMoves.length-1); i++) {
+			var nextLocation = getFinalLocation(dogMoves[i]);
+
+			if (nextLocation.x == dogMoves[i+1].x && nextLocation.y == dogMoves[i+1].y) {
+				console.log(i);
+				console.log(dogMoves[i]);
+				console.log(nextLocation);
+				noConsecutiveLocations = false;
+			}
+		}
+	}
+
+
+	initializeTask(function () {
+		startNextTrial();
+	});
+});
+
+</script>
+
+</html>
