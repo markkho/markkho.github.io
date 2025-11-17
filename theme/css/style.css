@@ -1,0 +1,87 @@
+/*html {*/
+    /**/
+/*}*/
+p, ul, li, span, div, .publication {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-kerning: auto;
+    font-size: 16px;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-variant-ligatures: normal;
+    font-weight: normal;
+    /*font-family: "Times New Roman", Times, serif;*/
+    /* font-family: 'Goudy Bookletter 1911', Georgia, Times, serif; */
+    /* font-size: 18px; */
+    /*line-height: 25px;*/
+}
+
+.publication {
+    margin-bottom: 4%;
+}
+
+.publication .csl-entry,.paperlink {
+    /* color: #515151; */
+    color: black;
+    font-weight: 400;
+}
+
+.publication a:hover {
+    color: black;
+}
+
+.publicationNote {
+    color: #ac4142;
+    font-weight: 400;
+}
+
+.rep-publication .csl-entry,.paperlink {
+    /* color: #515151; */
+    color: black;
+    font-weight: 400;
+}
+
+.rep-publication a:hover {
+    color: black;
+}
+
+
+h1, h2, h3 {
+    /* font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-weight: 350;
+    /* font-family: Arial, Helvetica, sans-serif; */
+    /* font-family: "PT Sans", Helvetica, Arial, sans-serif; */
+    /* font-family: 'Raleway', Helvetica, Arial, sans-serif; */
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.collapsible {
+    background-color: white;
+    /*color: white;*/
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+
+    /*outline: none;*/
+}
+
+.collapsible:focus {outline:0;}
+
+.collapsible:hover {
+    background-color: lightgrey;
+}
+
+.collapsible-content {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1.5s ease-out;
+}

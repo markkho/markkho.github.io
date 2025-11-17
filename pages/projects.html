@@ -10,26 +10,50 @@
 			<meta property="og:description" content="Cognitive Scientist" />
 			<meta property="og:title" content="Mark Ho" />
 			<meta property="og:type" content="website" />
-			<meta property="og:url" content=".." />
-		<meta property="og:image" content="../images/markkho.jpg" />
+			<meta property="og:url" content="" />
+		<meta property="og:image" content="/images/markkho.jpg" />
 
 		<!-- Enable responsiveness on mobile devices-->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-		<title>Projects</title>
+		<title>Mark Ho - Projects</title>
 
 		<!-- CSS -->
 		<link href="//fonts.googleapis.com/" rel="dns-prefetch">
 		<link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Abril+Fatface|PT+Sans:400,400italic,700&amp;subset=latin,latin-ext" rel="stylesheet">
 		<link href='https://fonts.googleapis.com/css?family=Antic Slab' rel='stylesheet'>
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911" rel="stylesheet">
 
-		<link rel="stylesheet" href="../theme/css/poole.css" />
-		<link rel="stylesheet" href="../theme/css/hyde.css" />
-		<link rel="stylesheet" href="../theme/css/syntax.css" />
+		<link rel="stylesheet" href="/theme/css/poole.css" />
+		<link rel="stylesheet" href="/theme/css/hyde.css" />
+		<link rel="stylesheet" href="/theme/css/syntax.css" />
+        <link rel="stylesheet" href="/theme/css/style.css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
 
 		<!-- RSS -->
 		<link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+	<script type="text/javascript">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-44411327-2', 'auto');
+			ga('send', 'pageview');
+	</script>
+
+        <!-- JS -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/citation-js@0.4.0-9/build/citation.min.js"
+            type="text/javascript"
+        ></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.min.js"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"
+        ></script>
 	</head>
 
 	<body class="theme-base-10">
@@ -39,7 +63,7 @@
 
 			<h1>
 				<a href="/">
-					<img class="profile-picture" src="../images/markkho.jpg">
+					<img class="profile-picture" src="/images/markkho.jpg">
 					Mark Ho
 				</a>
 			</h1>
@@ -49,44 +73,21 @@
 		</div>
 		<div>
 				<div>
-					<a href="../" class="sidebar-link">
+					<a href="/" class="sidebar-link">
 						Home
-					</a>
-				</div>
-				<div>
-					<a href="../pages/papers.html" class="sidebar-link">
-						Papers
-					</a>
-				</div>
-				<div>
-					<a href="../pages/projects.html" class="sidebar-link">
-						Projects
-					</a>
-				</div>
-				<div>
-					<a href="../pages/cv.html" class="sidebar-link">
-						CV
-					</a>
-				</div>
-				<div>
-					<a href="../pages/contact.html" class="sidebar-link">
-						Contact
 					</a>
 				</div>
 		</div>
 		<div>
-			<br>
-			<br>
-			<br>
 		</div>
 		<nav class="sidebar-nav">
 					<a class="sidebar-nav-item" href="https://github.com/markkho" target="_blank">
 						<i class="fa fa-github"></i>
 					</a>
-					<a class="sidebar-nav-item" href="https://twitter.com/_mk_ho" target="_blank">
+					<a class="sidebar-nav-item" href="https://twitter.com/Mark_Ho_" target="_blank">
 						<i class="fa fa-twitter"></i>
 					</a>
-					<a class="sidebar-nav-item" href="mailto:mark_ho@berkeley.edu">
+					<a class="sidebar-nav-item" href="mailto:mark.ho@nyu.edu">
 						<i class="fa fa-envelope"></i>
 					</a>
 		</nav>
@@ -95,23 +96,260 @@
     <h1>Projects</h1>
     
 
-    <p>A summary of the projects I've been working on - stay tuned!</p>
-<!-- ## Communicative Demonstrations -->
+    
+    <p>
+        Below are short summaries of my work organized into
+        broad projects. You can also see <a href="/pages/papers.html">Papers</a>.
+    </p>
+    <!-- <button class="collapsible"><h2>Communicative Demonstrations</h2></button> -->
+    <h2>Communicative Demonstrations</h2>
+            <!-- <div class="collapsible-content"> -->
+            <!-- <div class="center">
+                <img src="/images/mime.jpg.webp">
+                <p style="font-size:15px">Miming involves communicating with your actions</p>
+            </div> -->
 
-<!-- ## Teaching with Reward and Punishment -->
+            <h3>Motivation</h3>
+            <p>
+                Observing someone's actions allows us to infer what they know, expect,
+                want, or other mental states. Conversely, the person being
+                observed could use their actions to <i>show</i> an
+                observer what's in their head. This can occur during
+                everyday teaching or in other social interactions and activities (e.g. miming).
+            </p>
 
-<!-- ## Inverse Representation Learning -->
+            <h3>Summary</h3>
+            <p>
+                We examine <i><b>communicative demonstrations</b></i> using a combination
+                of computational models and experiments. In particular, we study
+                how people <i>optimally plan over observer belief transitions</i> to accomplish
+                communicative goals as well as how recognition of a demonstrator's communicative
+                goals affects interpretion by an observer.
+            </p>
 
-<!-- ## Learning and Using Abstract Norms -->
+            <h3>Relevant Work</h3>
+            <ul>
+            	<li><a target="_blank" href="https://psyarxiv.com/a8sxk/">
+                    Ho, M. K., Cushman, F. A., Littman, M. L., & Austerweil, J. L. A Rational-Pragmatic Account of Communicative Demonstrations. Pre-print.
+                </a></li>
+                <li><a target="_blank" href="/documents/cogsci2018_learningfromdemonstration.pdf">
+                    Ho, M. K., Littman, M. L., Cushman, F., & Austerweil, J. L. (2018).
+                    Effectively learning from pedagogical demonstrations.
+                    Cog Sci.
+                </a></li>
+                <li><a target="_blank" href="/documents/NIPS_2016_Teaching_by_demonstration.pdf">
+                    Ho, M. K., Littman, M. L., MacGlashan, J., Cushman, F., &
+                    Austerweil, J. L. (2016). Showing versus doing: Teaching by
+                    demonstration. NIPS.
+                </a></li>
+            </ul>
 
-<!-- ## Structuring Learning and Teaching by Intervention -->
+            <h3>Code</h3>
+            <ul>
+                <li><a target="_blank" href="https://github.com/markkho/demonstration-teach-learn">
+                    Teaching with and learning from demonstration models (CogSci 2018).
+                </a></li>
+            </ul>
+    <!-- </div> -->
 
-		<p>
-		Last updated: Sun 29 July 2018
-		</p>
+    <!-- ## Teaching with Reward and Punishment -->
+    <button class="collapsible"><h2>Social Rewards and Punishments</h2></button>
+        <div class="collapsible-content">
+            <div class="center" style="width:500px">
+                <img src="/images/reward-punish-ex.jpg">
+                <p style="font-size:15px">Two (non-human) agents receiving rewards/punishments</p>
+            </div>
+
+            <h3>Motivation</h3>
+            <p>
+                Social rewards and punishments are everywhere. They can occur
+                between a parent and children or in other social interactions (even
+                those involving non-humans), and they have been proposed as a way
+                to teach artificial learners. But how exactly do people use rewards
+                and punishments to influence another's behavior?
+            </p>
+
+            <h3>Summary</h3>
+            <p>
+                It is often assumed that people use rewards
+                and punishments to <i><b>shape</b></i> others' behavior (e.g.
+                in the sense of operant conditioning). However,
+                through a combination of computational and emprical studies,
+                our work argues that people do not reward and punish in this manner.
+                Rather, rewards and punishments tend to be used
+                <i><b>communicatively</b></i> to signal information. This insight motivates
+                a new perspective on human social learning as well as new interactive
+                machine learning algorithms.
+            </p>
+
+            <h3>Relevant Work</h3>
+            <ul>
+                <li>
+                    <a target="_blank" href="https://psyarxiv.com/3cd7r/">
+                        <b>Ho, M. K.</b>, Cushman, F. A., Littman, M. L., & Austerweil, J. L. (2019) People Teach with Rewards and Punishments as Communication not Reinforcements. Journal of Experimental Psychology: General
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://doi.org/10.1016/j.cognition.2017.03.006">
+                        <b>Ho, M. K.</b>, MacGlashan, J., Littman, M. L., & Cushman, F. (2017).
+                        Social is special: A normative framework for teaching with and learning from
+                        evaluative feedback. Cognition.
+                        https://doi.org/10.1016/j.cognition.2017.03.006
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="/documents/MacGlashan_et_al_Policy_Dependent_feedback.pdf">
+                        MacGlashan, J., <b>Ho, M. K.</b>, Loftin, R. T., Peng, B., Roberts, D. L.,
+                        Taylor, M. E., & Littman, M. L. (2017). Interactive Learning from
+                        Policy-Dependent Human Feedback. ICML.
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="/documents/hoetal_teaching_reward_cogsci2015.pdf">
+                        <b>Ho, M. K.</b>, Littman, M. L., Cushman, F. & Austerweil, J. L. (2015).
+                        Teaching with rewards and punishments: Reinforcement or communication?
+                        Cog Sci.
+                    </a>
+                </li>
+            </ul>
+
+            <h3>Code</h3>
+            <ul>
+                <li><a target="_blank" href="https://github.com/markkho/pyrlap">
+                    Pyrlap - A python library for reinforcement learning and planning projects.
+                </a></li>
+            </ul>
+    </div>
+
+    <!-- ## Inverse Representation Learning -->
+    <button class="collapsible"><h2>Inverse Representation Learning</h2></button>
+        <div class="collapsible-content">
+            <div class="center">
+                <img src="/images/progtree.png">
+                <p style="font-size:15px"></p>
+            </div>
+
+            <h3>Motivation</h3>
+            <p>
+                When we observe someone else's behavior, we can often infer how they
+                represent a task. This requires the observer to have a rich theory
+                of an actor's unobservable mental structure.
+            </p>
+
+            <h3>Summary</h3>
+            <p>
+                Using ideas from computer science and
+                reinforcement learning, we examine how people and computers can
+                interpret others'
+                behavior in terms of rich representational structure.
+            </p>
+
+            <h3>Relevant Work</h3>
+            <ul>
+                <li>
+                    <a target="_blank" href="https://arxiv.org/pdf/1710.03875.pdf">
+                        Vazquez-Chanlatte, M., Jha, S., Tiwari, A., <b>Ho, M. K.</b>, & Seshia,
+                    S. A. (2018).
+                        Learning Task Specifications from Demonstrations. NeurIPS.
+                        </a>
+                </li>
+                <li><a target="_blank" href="https://ccneuro.org/2018/proceedings/1265.pdf">
+                    Ho, M. K., Sanborn, S., Callaway, F., Bourgin, D., & Griffiths, T. (2018).
+                    Human Priors in Hierarchical Program Induction. Extended Abstract presented at
+                    Cognitive Computational Neuroscience. Philadelphia, PA.
+                </a></li>
+            </ul>
+    </div>
+
+    <!-- ## Learning and Using Abstract Norms -->
+    <button class="collapsible"><h2>Abstract Norm Learning</h2></button>
+        <div class="collapsible-content">
+            <div class="center">
+                <img src="/images/norms.jpg">
+                <p style="font-size:15px"></p>
+            </div>
+
+            <h3>Motivation</h3>
+            <p>
+                Norms are often represented abstractly rather than in terms of
+                low level actions. How are these
+                abstract social representations learned through
+                interaction?
+            </p>
+
+            <h3>Summary</h3>
+            <p>
+                Using the framework of multi-agent reinforcement learning and
+                multi-participant experimental paradigms, we explore how
+                people learn and use abstract norms. In particular, we examine
+                norms of cooperation/competition as well as behavioral norms
+                that can arise in fully collaborative settings where people
+                must work together to achieve a shared goal.
+            </p>
+
+            <h3>Relevant Papers</h3>
+            <ul>
+                <li>
+                    <a target="_blank" href="/documents/ho_et_al_normlearning_2016.pdf">
+                        <b>Ho, M. K.</b>, MacGlashan, J., Greenwald, A., Littman, M. L., Hilliard,
+                        E. M., Trimbach, C., Brawner, S., Tenenbaum, J. B., Kleiman-Weiner, M.,
+                        Austerweil, J. L. (2016). Feature-based joint planning and norm learning
+                        in collaborative games. Cog Sci.
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="/documents/kleiman2016coordinate.pdf">
+                        Kleiman-Weiner, M., <b>Ho, M. K.</b>, Austerweil, J. L., Littman, M. L.,
+                        & Tenenbaum, J. B. (2016). Coordinate to cooperate or compete: Abstract
+                        goals and joint intentions in social interaction. In Proceedings of the
+                        38th Annual Meeting of the Cognitive Science Society. Austin, TX: Cognitive
+                        Science Society.
+                    </a>
+                </li>
+            </ul>
+
+            <h3>Code</h3>
+            <ul>
+                <li>
+                    <a target="_blank" href="https://github.com/markkho/norms-cogsci2016">
+                        Demo of task used in Ho et al. (2016).
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="https://github.com/markkho/gridworld-painter-js">
+                        Gridworld Painter Library
+                    </a>
+                </li>
+            </ul>
+    </div>
+
+    <!-- ## Structuring Learning and Teaching by Intervention -->
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+              content.style.maxHeight = null;
+            } else {
+              content.style.maxHeight = content.scrollHeight + "px";
+            }
+          });
+        }
+    </script>
+
+    
+
+        <p>
+        Last updated: Mon 01 October 2018
+        </p>
 		</div>
 		<div class="content container" style="font-size:14px">
-			<p>Copyright &copy; Mark Ho 2016-2018. Theme based on <a target="_blank" href="https://github.com/jvanz/pelican-hyde">Pelican-Hyde</a>.</p>
+			<p>Copyright &copy; Mark Ho 2016-2023. Theme based on <a target="_blank" href="https://github.com/jvanz/pelican-hyde">Pelican-Hyde</a>.</p>
 			<p></p>
 		</div>
 	</body>

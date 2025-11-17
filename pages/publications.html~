@@ -1,0 +1,167 @@
+<html>
+    <head>
+        <title>Publications</title>
+    </head>
+    <body>
+        <!-- <br>
+        <input type="text" id="searchBar" onkeyup="updateSearch()" placeholder="Search..." style='font-size: 20px;'>
+        <br>
+        <br> -->
+
+        <div id="paperlist">
+        </div>
+
+        <script src="../documents/bibtexParse.js" type="text/javascript"></script>
+        <script>
+            console.log(bibtexParse)
+        </script>
+        <script src="../documents/citation-0.4.0-9.js" type="text/javascript"></script>
+        <script>
+            const Cite = require('citation-js')
+            console.log(Cite)
+        </script>
+        <script>
+        let parseEntry = function(jsonEntry) {
+            jsonEntry = JSON.parse(JSON.stringify(jsonEntry))
+            // replace latex bolding
+            jsonEntry.properties.author = jsonEntry.properties.author.replace('{\\bf Ho}, {\\bf M} {\\bf K}', 'Mark K. Ho')
+            jsonEntry.properties.author = jsonEntry.properties.author.replace('{\\bf Ho*}, {\\bf M} {\\bf K}', 'Mark K. Ho*')
+
+            // remove certain entries for website
+            let url = jsonEntry.properties.url
+            delete jsonEntry.properties.url
+            delete jsonEntry.properties.editor
+            delete jsonEntry.properties.location
+            delete jsonEntry.properties.address
+            delete jsonEntry.properties.volume
+            delete jsonEntry.properties.publisher
+            delete jsonEntry.properties.pages
+            delete jsonEntry.properties.number
+
+            // create entry
+            let cite = new Cite(jsonEntry);
+            let entry_text = cite.format('bibliography', {format: 'html', template: 'apa'})
+            entry_text = entry_text.replace("Ho, M. K.", "<b>Ho, M. K.</b>")
+            // fix year if set to (n.d.)
+            entry_text = entry_text.replace("(n.d.)", `(${jsonEntry.properties.year})`)
+            //make linkable
+            let entrylink = ""
+            if (jsonEntry.properties._preprint){
+                entrylink = jsonEntry.properties._preprint;
+            } else if (url) {
+                entrylink = url;
+            }
+            if (entrylink) {
+                entry_text = `<a target="_blank" href="${entrylink}">`+entry_text+'</a>'
+            }
+
+            entry_text = entry_text.replace(/’/g, "'")
+            let cleantitle = jsonEntry.properties.title.replace(/[{}]/g, "")
+            cleantitle = cleantitle.replace(/’/g, "'")
+            if (entry_text.indexOf(cleantitle) === -1) {
+                console.log(entry_text)
+            }
+            entry_text = entry_text.replace(cleantitle, `<b>${cleantitle}</b>`)
+
+            // links for entry
+            let links = ""
+            // if (jsonEntry.properties._preprint) {
+            //     links += `[<a target="_blank" href="${jsonEntry.properties._preprint}"><span class="paperlink">Preprint</span></a>]`
+            // }
+            if (jsonEntry.properties._code) {
+                links += `[<a target="_blank"  href="${jsonEntry.properties._code}"><span class="paperlink">Code</span></a>]`
+            }
+            if (jsonEntry.properties._materials) {
+                links += `[<a target="_blank" href="${jsonEntry.properties._materials}"><span class="paperlink" >Supplemental Materials</span></a>]`
+            }
+            if (links.length > 0) {
+                entry_text += `<div>${links}</div>`
+            }
+            // entry_text += "<br>"
+            return entry_text
+        }
+
+        let searchMatch = function(paper, search) {
+            let entry = paper.textContent.toUpperCase();
+            let filter = search.toUpperCase()
+            return entry.indexOf(filter) > -1
+        }
+
+        let updateSearch = function() {
+            // Declare variables
+            let input = document.getElementById('searchBar');
+            let search = input.value;
+            let papers = $("#paperlist").children();
+            for (let i = 0; i < papers.length; i ++) {
+                let paper = papers[i];
+                if (searchMatch(paper, search)) {
+                    paper.style.display = "";
+                }
+                else {
+                    paper.style.display = "none";
+                }
+            }
+        }
+
+        fetch("../documents/bibliography.bib")
+        .then((resp) => {
+            return resp.text()
+        }).then((bib) => {
+            bib = Cite.parse.bibtex.text(bib)
+            window.bib = bib;
+            bibmap = {}
+            window.bibmap = bibmap;
+            for (let i = 0; i < bib.length; i++) {
+                bibmap[bib[i].label] = bib[i]
+            }
+            let makeEntryElement = (label) => {
+                let text_entry = parseEntry(bibmap[label])
+                let entry = `<div id=${label} class="publication">${text_entry}</div>`
+                return entry
+            }
+            $("#paperlist").append("<h3>Working Papers</h3>")
+            $("#paperlist").append(makeEntryElement('ho2021control'))
+            $("#paperlist").append(makeEntryElement('dubey2021aha'))
+            $("#paperlist").append(makeEntryElement('ho2021planning'))
+
+            $("#paperlist").append("<h3>Recent Papers</h3>")
+            $("#paperlist").append(makeEntryElement('ho2021communication'))
+            $("#paperlist").append(makeEntryElement('ho2021cognitive'))
+            $("#paperlist").append(makeEntryElement('gates2021rational'))
+            $("#paperlist").append(makeEntryElement('sarin2021punishment'))
+            $("#paperlist").append(makeEntryElement('sumers2021learning'))
+            $("#paperlist").append(makeEntryElement('sumers2021extending'))
+            $("#paperlist").append(makeEntryElement('wu2021specialization'))
+
+            $("#paperlist").append("<h3>2020</h3>")
+            $("#paperlist").append(makeEntryElement('ho2020efficiency'))
+            $("#paperlist").append(makeEntryElement('correa2020resource'))
+            $("#paperlist").append(makeEntryElement('sumers2020show'))
+            $("#paperlist").append(makeEntryElement('wang2020teaching'))
+
+            $("#paperlist").append("<h3>2019</h3>")
+            $("#paperlist").append(makeEntryElement('ho2019people'))
+            $("#paperlist").append(makeEntryElement('ho2019value'))
+            $("#paperlist").append(makeEntryElement('ho2019computational'))
+            $("#paperlist").append(makeEntryElement('carroll2019utility'))
+
+            $("#paperlist").append("<h3>2018</h3>")
+            $("#paperlist").append(makeEntryElement('ho_effectively_2018'))
+            $("#paperlist").append(makeEntryElement('vazquez2018learning'))
+
+            $("#paperlist").append("<h3>2017</h3>")
+            $("#paperlist").append(makeEntryElement('ho2017social'))
+            $("#paperlist").append(makeEntryElement('ho_teaching_2017'))
+            $("#paperlist").append(makeEntryElement('macglashan2017interactive'))
+
+            $("#paperlist").append("<h3>2016</h3>")
+            $("#paperlist").append(makeEntryElement('ho2016showing'))
+            $("#paperlist").append(makeEntryElement('ho_feature-based_2016'))
+            $("#paperlist").append(makeEntryElement('kleimanweiner2016coordinate'))
+
+            $("#paperlist").append("<h3>2015</h3>")
+            $("#paperlist").append(makeEntryElement('ho_teaching_2015'))
+        })
+        </script>
+    </body>
+</html>

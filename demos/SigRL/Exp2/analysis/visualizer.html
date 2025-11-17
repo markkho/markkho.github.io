@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ho et al. (2016) Feature-based Joint Planning and Norm Learning in Collaborative Games Visualizer [Exp 2]</title>
+    <meta name="date" content="2021" />
+    <meta name="modified" content="2021" />
+	<style>
+	#viz {
+		width : 80%;
+		margin : 0 auto;
+	}
+	#task_display {
+		width: 80%;
+		padding-left: 0;
+	    padding-right: 0;
+	    margin-left: auto;
+	    margin-right: auto;
+	    display: block;
+	}
+
+	#message_outer {
+		background-color:black;
+	}
+
+	#messages {
+		font-size: 30px;
+		background-color:black;
+		color:white;
+		text-align : left;
+	    margin-left: 50px;
+	}
+
+	.linklike {
+		text-decoration: underline;
+		color : blue;
+		-webkit-touch-callout: none;
+	    -webkit-user-select: none;
+	    -khtml-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    user-select: none;
+	}
+	.linklike:hover {
+		cursor:pointer;
+	}
+	.linklike:active {
+		color:red;
+	}
+
+	.playerinfo {
+		margin: 0px;
+	}
+
+	</style>
+	<!--utility libraries-->
+	<script src="./js/jquery.js"></script>
+	<script src="./js/tiny-pubsub.js"></script>
+	<script src="./js/raphael.js"></script>
+	<script src="./js/underscore.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>
+
+	<!--experiment libraries-->
+	<script src="./js/gridworld_painter.js"></script>
+	<script src="./js/clientMDP.js"></script>
+	<script src="./js/papaparse.min.js"></script>
+
+
+	<script src="./js/gridgame_visualizer.js"></script>
+
+	<!-- templates -->
+	<script type="text/template" id="playerinfo-template">
+
+      <p><b>Participant : </b> <%= color %>&nbsp;&nbsp;<b>Condition : </b> <%= condition %>&nbsp;&nbsp;
+      <b>Self-Strategy:&nbsp;</b><%= participant_strategy %>&nbsp;&nbsp;&nbsp;<b>Other-Strategy:&nbsp;</b><%= learner_strategy %>&nbsp;&nbsp;&nbsp;
+      <b>Feedback:&nbsp;</b><%= feedback %>
+      <br><b>Difficulty:&nbsp;</b><%= difficulty %>&nbsp;&nbsp;&nbsp;<b>Self-rated skill:&nbsp;</b><%= good_at_task %>&nbsp;&nbsp;&nbsp;
+      <b>CRT Risk:&nbsp;</b><%= CRTrisk %>&nbsp;&nbsp;&nbsp;<br><b>Age:&nbsp;</b>
+      <%= age %>&nbsp;&nbsp;&nbsp;<b>Gender:&nbsp;</b><%= Gender %>&nbsp;&nbsp;&nbsp;
+      <b>Education:&nbsp;</b><%= Education %>&nbsp;&nbsp;&nbsp;<b>Ideology:&nbsp;</b><%= Ideology %></p>
+    </script>
+
+</head>
+<body>
+	<div id="myapp">
+		<div id='viz'>
+			<div>
+				<b>Instructions:</b> Participants were paired into Matches. Each Match consisted of a number of Rounds, which contain a certain number of Turns. You can navigate over Turns and Rounds using the buttons below. To start over, click "Home".
+			</div>
+			<br>
+
+		<a href='visualizer.html'>Home</a>
+		<div id="match-header">
+			<b>Matches:</b>
+		</div>
+		<div id="matches">
+			<div id="match-list"></div>
+		</div>
+		<br>
+		<div id="round-header">
+			<b>Rounds in match:</b>
+		</div>
+		<div id="rounds">
+			<div id="round-list"></div>
+		</div>
+		<br>
+		<div id="trial-header">
+			<b>Turns in this Round:</b>
+			<span id="turn-list">
+			</span>
+		</div>
+		<div id="trials">
+			<br>
+			<b>Current Match:</b> <span id='current_match'></span> &nbsp;&nbsp;&nbsp;
+			<b>Current Round:</b> <span id='current_round'></span> &nbsp;&nbsp;&nbsp;
+			<b>Current Turn:</b> <span id='current_trial'></span><br>
+
+			<br>
+			<br>
+			<b>Navigation:</b>
+			<span><span class = 'linklike' id='round-prev'>Previous Round</span></span>
+			&nbsp;
+			&nbsp;
+			&nbsp;
+			<span><span class = 'linklike' id='trials-prev'>Last Turn</span></span>
+			&nbsp;
+			<span><span class = 'linklike' id='trials-next'>Next Turn</span></span>
+			&nbsp;
+			&nbsp;
+			&nbsp;
+			<span><span class = 'linklike' id='round-next'>Next Round</span></span>
+		</div>
+		<div>
+			<div id='player1' class='playerinfo' >
+			</div>
+			<div id="task_display"></div>
+			<div id='player2' class='playerinfo'>
+			</div>
+		</div>
+
+	</div>
+	</div>
+
+	<script>
+	"use strict"
+
+	var trialdata, maindata, visualizer;
+	var data_loaded = false;
+
+	function loadVisualizer () {
+		if (typeof trialdata === 'undefined' || typeof maindata === 'undefined') {
+			return
+		}
+		visualizer = new GridGameVisualizer();
+		visualizer.init(trialdata, maindata, 'task_display');
+	}
+	function loadData () {
+		$.get('trials.tsv', function(csv) {
+			var data = Papa.parse(csv, {header : true});
+			trialdata = data.data;
+
+
+			$.get('main.csv', function(csv) {
+				var data = Papa.parse(csv, {header : true});
+				maindata = data.data;
+				data_loaded = true;
+
+				//clean the data
+				//only include non-excluded workers
+				maindata = _.filter(maindata, function (row) {return row.exclude !== "1"});
+				var participants = _.pluck(maindata, 'workerid');
+
+				_.map(maindata, function (participant) {
+					if (participant.condition === 's') {
+						participant.condition = "Selfish";
+					}
+					else if (participant.condition === 'f') {
+						participant.condition = "Fair";
+					}
+				})
+				_.map(trialdata, function (trial) {
+					trial.match = _.indexOf(participants, trial.workerid);
+				})
+				//associate each worker with a match
+				loadVisualizer();
+
+
+			}, "text");
+		}, "text");
+	}
+	$(document).ready(function(){
+		loadData();
+	});
+	</script>
+</body>
+</html>
